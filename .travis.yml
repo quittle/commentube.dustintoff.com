@@ -1,0 +1,14 @@
+env:
+    - BAZEL_VERSION='0.10.0'
+
+sudo: true
+
+before_install:
+    - ./travis/before_install.sh
+
+script:
+    - bazel build //...
+
+deploy:
+    provider: script
+    script: bazel run deploy_site

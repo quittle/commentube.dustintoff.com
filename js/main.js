@@ -4,7 +4,7 @@ var commentCanvasContext; //Context2D
 var playerMonitor; //PlayerMonitor
 var drawingLines = new Array(), commentLines = new Array(), commentCanvases = new Array(); //Arrays
 
-function getVideoPlayer(){
+function getVideoPlayer() {
 	//Get the video id from the input box
 	videoid = extractYoutubeVideoId(document.getElementById("videoid").value);
 
@@ -15,7 +15,7 @@ function getVideoPlayer(){
 	commentHolder.style.display = "";
 	playerSection.style.display = "";
 
-	if(player != null){ //Clear old things if already loaded
+	if (player != null) { //Clear old things if already loaded
 		var playerHolder = document.getElementById("playerHolder");
 		playerHolder.innerHTML = "";
 		playerHolder.appendChild(genEl("div", {"id":"player"}));
@@ -61,20 +61,20 @@ function onPlayerReady(event) {
 	playerMonitor = new PlayerMonitor(event.target);
 
 	//Update progressbar
-	playerMonitor.onTime(-1, 0, function(p){
+	playerMonitor.onTime(-1, 0, function(p) {
 		progress.style.width = (p.getCurrentTime() / p.getDuration())*100 + "%";
 		progress.style.paddingRight = p.getVideoLoadedFraction() * 100 - parseFloat(progress.style.width) + "%";
 	});
 
 	//Update rolling comments position
-	playerMonitor.onTime(-1, 0, function(p){
-		if(rollingCommentsHolder.hasChildNodes()){
-			for(var i=rollingCommentsHolder.childNodes.length-1;i>=0;i--){ // This must already be sorted
+	playerMonitor.onTime(-1, 0, function(p) {
+		if (rollingCommentsHolder.hasChildNodes()) {
+			for (var i=rollingCommentsHolder.childNodes.length-1;i>=0;i--) { // This must already be sorted
 				var n = rollingCommentsHolder.childNodes[i];
 				var nTime = parseFloat(n.getAttribute("time"));
-				if(nTime < p.getCurrentTime()){ //Find the last comment before the current time
+				if (nTime < p.getCurrentTime()) { //Find the last comment before the current time
 					var increment = 0;
-					if(i<rollingCommentsHolder.childNodes.length-1){ // Increment for partial scrolling within block
+					if (i<rollingCommentsHolder.childNodes.length-1) { // Increment for partial scrolling within block
 						var nextNode = rollingCommentsHolder.childNodes[i+1];
 						increment = ((p.getCurrentTime()-nTime) / (parseFloat(nextNode.getAttribute("time")) - nTime)) * getHeight(n); // Percentage of block
 					}
@@ -89,11 +89,11 @@ function onPlayerReady(event) {
 	});
 
 	//Update highlighting of rolling comments
-	/*playerMonitor.onTime(-1, 0, function(p){
-		if(rollingCommentsHolder.hasChildNodes()){
-			for(var i in rollingCommentsHolder.childNodes){
+	/*playerMonitor.onTime(-1, 0, function(p) {
+		if (rollingCommentsHolder.hasChildNodes()) {
+			for (var i in rollingCommentsHolder.childNodes) {
 				var n = rollingCommentsHolder.childNodes[i];
-				if(parseFloat(n.time) > p.getCurrentTime()){
+				if (parseFloat(n.time) > p.getCurrentTime()) {
 			}
 		}
 	});*/
@@ -104,10 +104,9 @@ function onPlayerReady(event) {
 // The API calls this function when the player's state changes.
 var loadedAlready;
 function onPlayerStateChange(event) {
-	if(event.data == YT.PlayerState.PLAYING && !loadedAlready){
+	if (event.data == YT.PlayerState.PLAYING && !loadedAlready) {
 		loadedAlready = true;
 		getVideoData(videoid, function(data) {
-			console.log(data);
 			for (var i = 0; i < data.length; i++) {
 				var comment = data[i];
 				addComment(comment.timestamp, comment.date, comment.comment, comment.lines);
@@ -117,7 +116,7 @@ function onPlayerStateChange(event) {
 }
 
 /* My code */
-function resizeCommentCanvas(){
+function resizeCommentCanvas() {
 	var width = parseInt(style(playerHolder, "width"), 10);
 	var height = width * 0.5625; // Maintain 16:9 ration
 	playerWrapper.style.width = width + "px";
@@ -130,10 +129,10 @@ function resizeCommentCanvas(){
 	commentCanvasContext.strokeStyle = "#000";
 }
 
-function editComment(e){
+function editComment(e) {
 	var key = e.keyCode;
-	if(key == 13 && !e.shiftKey){ // Enter
-		if(commentArea.value == "")
+	if (key == 13 && !e.shiftKey) { // Enter
+		if (commentArea.value == "")
 			return false;
 
 		commentSent.style.visibility = "visible";
@@ -149,7 +148,7 @@ function editComment(e){
 			commentSent.innerHTML = "Comment sent.";
 			var timer = setInterval(function() {
 				commentSent.style.opacity = parseFloat(commentSent.style.opacity) - 0.005;
-				if(parseFloat(commentSent.style.opacity) < 0){
+				if (parseFloat(commentSent.style.opacity) < 0) {
 					commentSent.style.visibility = "hidden";
 					commentSent.style.opacity = 1;
 					clearInterval(timer);
@@ -157,11 +156,11 @@ function editComment(e){
 			}, 10);
 		});
 
-		// loadXMLDoc("video="+videoid+ "&time="+time+ "&comment="+c+ "&lines="+drawingLines, function (ret){
+		// loadXMLDoc("video="+videoid+ "&time="+time+ "&comment="+c+ "&lines="+drawingLines, function (ret) {
 		// 	commentSent.innerHTML = "Comment sent.";
-		// 	var c = setInterval(function(){
+		// 	var c = setInterval(function() {
 		// 		commentSent.style.opacity = parseFloat(commentSent.style.opacity) - 0.005;
-		// 		if(parseFloat(commentSent.style.opacity) < 0){
+		// 		if (parseFloat(commentSent.style.opacity) < 0) {
 		// 			commentSent.style.visibility = "hidden";
 		// 			commentSent.style.opacity = 1;
 		// 			cancelTimer(c);
@@ -175,13 +174,13 @@ function editComment(e){
 		curTimeBox.innerHTML = "";
 		clearCanvas();
 		return false;
-	}else{
+	} else {
 		pauseVideo();
 		setCurTimeBox();
 	}
 	return true;
 }
-function addComment(time, date, commentString, lines){
+function addComment(time, date, commentString, lines) {
 	if (!commentString) {
 		return false;
 	}
@@ -201,11 +200,11 @@ function addComment(time, date, commentString, lines){
 	comment.appendChild(commentLeftBlock);
 	comment.appendChild(genEl("span", {"class": "commentListItem"}, null, commentString));
 
-	var jumpTo = function(){
+	var jumpTo = function() {
 		player.seekTo(time, true);
 		pauseVideo();
 		clearCanvas();
-		console.log("drawing lines: " + lines);
+		console.log("drawing lines: " + JSON.stringify(lines));
 		drawLines(lines);
 	};
 	comment.appendChild(genEl("span", {"class":"commentJump","onclick":jumpTo}, null, "Jump To"));
@@ -215,69 +214,70 @@ function addComment(time, date, commentString, lines){
 	var newLine = commentString.indexOf("<br /");
 	rollingComment.innerHTML = newLine==-1?commentString:commentString.substring(0, newLine) + "...";
 	var inserted = false;
-	if(rollingCommentsHolder.hasChildNodes()){
-		for(var i=0;i<rollingCommentsHolder.childNodes.length;i++){
+	if (rollingCommentsHolder.hasChildNodes()) {
+		for (var i=0; i<rollingCommentsHolder.childNodes.length; i++) {
 			var n = rollingCommentsHolder.childNodes[i];
-			if(parseFloat(n.getAttribute("time"))>time){
+			if (parseFloat(n.getAttribute("time"))>time) {
 				rollingCommentsHolder.insertBefore(rollingComment, n);
 				inserted = true;
 			}
 		}
 	}
-	if(!inserted) // Default to adding to end
+	if (!inserted) // Default to adding to end
 		rollingCommentsHolder.appendChild(rollingComment);
 
-	var commentPip = genEl("span", {"class":"commentPip", "onclick":jumpTo}, {"left":(100*time / player.getDuration()) + "%"});
-	commentPip.onmouseover = function(){
+	var commentPip = genEl("span", {"class":"commentPip", "onclick":jumpTo}, {"left":(100 * time / player.getDuration()) + "%"});
+	commentPip.onmouseover = function() {
 		var commentPipHover = genEl("span", {"class":"commentPipHover"}, null, commentString);
 		commentPip.appendChild(commentPipHover);
 		commentPipHover.style.left = getWidth(commentPipHover)/-2 + "px"; //Needs to be added before width can be calculated
 	}
-	commentPip.onmouseout = function(){
+	commentPip.onmouseout = function() {
 		commentPip.innerHTML = "";
 		commentPip.style.zIndex = "";
 	}
 	progressBar.appendChild(commentPip);
-	if(commentBox.childNodes.length>0)
+	if (commentBox.childNodes.length>0)
 		commentBox.insertBefore(comment, commentBox.firstChild);
 	else
 		commentBox.appendChild(comment);
 }
 
-function drawLine(x1, y1, x2, y2){
+function drawLine(x1, y1, x2, y2) {
 	commentCanvasContext.beginPath();
 	commentCanvasContext.moveTo(x1, y1);
 	commentCanvasContext.lineTo(x2, y2);
 	commentCanvasContext.stroke();
 }
-function drawLines(lines, opacity, canvasContext){
-	if(!opacity)
-		opacity = 1;
-	if(!canvasContext)
-		canvasContext = commentCanvasContext;
-	canvasContext.strokeStyle = "rgba(0,0,0," + opacity + ")";
-	var cWidth = canvasContext.canvas.width;
-	var cHeight = canvasContext.canvas.height;
-	canvasContext.beginPath();
-	for(var i=0;i<lines.length;i+=4){
-		canvasContext.moveTo(lines[i]*cWidth, lines[i+1]*cHeight);
-		canvasContext.lineTo(lines[i+2]*cWidth, lines[i+3]*cHeight);
+function drawLines(lines) {
+	var cWidth = commentCanvas.width;
+	var cHeight = commentCanvas.height;
+	console.log('Drawing: ' + cWidth + ' ' + cHeight + ' ' + lines[0]);
+	commentCanvasContext.beginPath();
+	for (var i=0; i<lines.length; i+=4) {
+		var line = lines[i];
+		commentCanvasContext.moveTo(line[0] * cWidth, line[1] * cHeight)
+		commentCanvasContext.lineTo(line[2] * cWidth, line[3] * cHeight);
+		// console.log([line[i]*cWidth, lines[i+1]*cHeight, lines[i+2]*cWidth, lines[i+3]*cHeight]);
+		// canvasContext.moveTo(lines[i]*cWidth, lines[i+1]*cHeight);
+		// canvasContext.lineTo(lines[i+2]*cWidth, lines[i+3]*cHeight);
 	}
-	canvasContext.stroke();
+	commentCanvasContext.stroke();
 }
-function clearCanvas(canvasContext){
-	if(!canvasContext)
+function clearCanvas(canvasContext) {
+	if (!canvasContext)
 		canvasContext = commentCanvasContext;
 	canvasContext.clearRect(0, 0, canvasContext.canvas.width, canvasContext.canvas.height);
 	drawingLines.length = 0;
 }
 
-function init(){
+function init() {
 	var v = document.getElementById("videoid");
 	v.focus();
 	var val = window.location.hash.substring(1);
-	if(val != "")
+	if (val != "") {
 		v.value = "http://youtu.be/" + val;
+	}
 	selectAll(v);
 
 	//Grab all elements I'll need
@@ -297,7 +297,7 @@ function init(){
 	commentSent = document.getElementById("commentSent");
 
 	//Stop the right-click context-menu
-	var rFalse = function(){return false;};
+	var rFalse = function() {return false;};
 	document.getElementById("wrapper").onselectstart = rFalse;
 	commentCanvas.onselectstart = rFalse;
 	progress.onselectstart = rFalse;
@@ -307,56 +307,61 @@ function init(){
 	divider.onselectstart = rFalse;
 	commentHolder.onselectstart = rFalse;
 
-	progressBar.addEventListener("contextmenu", function(e){
+	progressBar.addEventListener("contextmenu", function(e) {
 		e.preventDefault();
 	});
-	progress.addEventListener("contextmenu", function(e){
+	progress.addEventListener("contextmenu", function(e) {
 		e.preventDefault();
 	});
-	progressIndicator.addEventListener("contextmenu", function(e){
+	progressIndicator.addEventListener("contextmenu", function(e) {
 		e.preventDefault();
 	});
-	progressCursor.addEventListener("contextmenu", function(e){
+	progressCursor.addEventListener("contextmenu", function(e) {
 		e.preventDefault();
 	});
 
 
 	var isMouseDownCanvas; //boolean
 	var prevX, prevY, startX, startY; //int
-	commentCanvas.addEventListener("contextmenu", function(e){
+	commentCanvas.addEventListener("contextmenu", function(e) {
 		clearCanvas();
 		e.preventDefault();
 	});
-	commentCanvas.addEventListener("click", function(e){
-		if(startX == prevX && startY == prevY){
+	commentCanvas.addEventListener("click", function(e) {
+		if (startX == prevX && startY == prevY) {
 			togglePlayPause();
 		}
 	});
-	commentCanvas.addEventListener("mousedown", function(e){
+	commentCanvas.addEventListener("mousedown", function(e) {
 		isMouseDownCanvas = true;
 		prevX = getRelativeX(e, commentCanvas);
 		prevY = getRelativeY(e, commentCanvas);
 		startX = prevX;
 		startY = prevY;
 	});
-	commentCanvas.addEventListener("mouseup", function(e){
+	commentCanvas.addEventListener("mouseup", function(e) {
 		commentArea.focus();
 		isMouseDownCanvas = false;
 	});
-	commentCanvas.addEventListener("mousemove", function(e){
-		if(isMouseDownCanvas){
+	commentCanvas.addEventListener("mousemove", function(e) {
+		if (isMouseDownCanvas) {
 			pauseVideo();
 			setCurTimeBox();
-			if(e.clientX!=0 || e.clientY!=0){
+			if (e.clientX != 0 || e.clientY != 0) {
 				var x = getRelativeX(e, commentCanvas);
 				var y = getRelativeY(e, commentCanvas);
 
 				var cWidth = getWidth(commentCanvas);
 				var cHeight = getHeight(commentCanvas);
 				//Record lines
-				var arr = [prevX/cWidth, prevY/cHeight, x/cWidth, y/cHeight];
-				for(var i in arr)
-					arr[i] = arr[i].toFixed(4);
+				var arr = [
+					prevX / cWidth, prevY / cHeight,
+					    x / cWidth,     y / cHeight
+				];
+				// console.log("before loop: " + JSON.stringify(arr));
+				// for (var i in arr)
+				// 	arr[i] = arr[i].toFixed(4);
+				// console.log("adding line: " + JSON.stringify(arr));
 				drawingLines.push(arr);
 
 				drawLine(prevX, prevY, x, y);
@@ -365,31 +370,31 @@ function init(){
 			}
 		} else {
 			var b = getBeneath(e);
-			if(b == progressCursor){
+			if (b == progressCursor) {
 				progressCursor.style.zIndex = 101;
-			}else if(b.className == "commentPip"){
+			} else if (b.className == "commentPip") {
 				b.style.zIndex = 100;
-			}else if(b.id == "progressBar" || b.id == "progress" || b.id == "progressIndicator"){
+			} else if (b.id == "progressBar" || b.id == "progress" || b.id == "progressIndicator") {
 				progressBar.style.zIndex = 100;
 			}
 		}
 	});
 
-	progressBar.addEventListener("mouseout", function(){
+	progressBar.addEventListener("mouseout", function() {
 		progressBar.style.zIndex = "";
 	});
 	var isMouseDownProgressCursor;
-	progressCursor.addEventListener("mousedown", function(e){
+	progressCursor.addEventListener("mousedown", function(e) {
 		isMouseDownProgressCursor = true;
 		pauseVideo();
 	});
-	var moveCursor = function(e){
-		if(isMouseDownProgressCursor){
+	var moveCursor = function(e) {
+		if (isMouseDownProgressCursor) {
 			progressCursor.style.left = restrict(getRelativeX(e, progressBar) - getWidth(progressCursor)/2, 0, getWidth(progressBar) - getWidth(progressCursor)/2) + "px";
 		}
 	};
-	var setCursor = function(e){
-		if(isMouseDownProgressCursor){
+	var setCursor = function(e) {
+		if (isMouseDownProgressCursor) {
 			player.seekTo((parseFloat(progressCursor.style.left) + getWidth(progressCursor))/getWidth(progressBar)*player.getDuration(), true);
 			playVideo();
 			progressCursor.style.left = "";
@@ -398,30 +403,30 @@ function init(){
 	};
 	progressCursor.addEventListener("mousemove", moveCursor);
 	progressBar.addEventListener("mousemove", moveCursor);
-	progressBar.addEventListener("click", function(){isMouseDownProgressCursor = true; moveCursor(event);setCursor(event);});
+	progressBar.addEventListener("click", function() {isMouseDownProgressCursor = true; moveCursor(event);setCursor(event);});
 	commentCanvas.addEventListener("mousemove", moveCursor);
 
 	progressCursor.addEventListener("mouseup", setCursor);
 	progressBar.addEventListener("mouseup", setCursor);
 	commentCanvas.addEventListener("mouseup", setCursor);
 
-	progressCursor.addEventListener("mouseout", function(e){
+	progressCursor.addEventListener("mouseout", function(e) {
 		progressCursor.style.zIndex = 101;
 	});
 
 	var isMouseDownDivider; //boolean
-	divider.addEventListener("mousedown", function(e){
+	divider.addEventListener("mousedown", function(e) {
 		isMouseDownDivider = true;
 		playerSection.style.cursor = "-webkit-grabbing";
 		rollingComments.style.cursor = "-webkit-grabbing";
 	});
 
-	var moveDivider = function(e){
-		if(isMouseDownDivider)
+	var moveDivider = function(e) {
+		if (isMouseDownDivider)
 			divider.style.left = restrict(getRelativeX(e, playerSection) - getWidth(divider)/2, 660, 850) + "px";
 	};
-	var setDivider = function(e){
-		if(isMouseDownDivider){
+	var setDivider = function(e) {
+		if (isMouseDownDivider) {
 			isMouseDownDivider = false;
 			playerSection.style.cursor = "default";
 			rollingComments.style.cursor = "default";
@@ -440,34 +445,34 @@ function init(){
 	divider.addEventListener("mouseup", setDivider);
 }
 
-function setCurTimeBox(){
+function setCurTimeBox() {
 	curTimeBox.innerHTML = Math.floor(player.getCurrentTime()) + " seconds";
 }
 
 //This object is for creating a listener that checks the time and runs a function if appropriate
-function PlayerMonitor(ytPlayer){
+function PlayerMonitor(ytPlayer) {
 	//Construction
 	var player = ytPlayer;
 	var timeFuncs = new Array();
 
-	this.start = function(interval){
-		if(!interval)
+	this.start = function(interval) {
+		if (!interval)
 			interval = 100;
-		setInterval(function(){
+		setInterval(function() {
 			var time = Math.floor(player.getCurrentTime());
-			for(var i in timeFuncs){
-				if(timeFuncs[i].time < 0 || Math.abs(timeFuncs[i].time - time)<=timeFuncs[i].acc){
+			for (var i in timeFuncs) {
+				if (timeFuncs[i].time < 0 || Math.abs(timeFuncs[i].time - time)<=timeFuncs[i].acc) {
 					timeFuncs[i].func(player, timeFuncs[i].obj);
 				}
 			}
 		}, interval);
 	}
 
-	this.onTime = function(time, acc, func, obj){
+	this.onTime = function(time, acc, func, obj) {
 		timeFuncs.push(new TimeFunc(time, acc, func, obj));
 	}
 }
-function TimeFunc(time, acc, func, obj){
+function TimeFunc(time, acc, func, obj) {
 	this.time = time;
 	this.acc = acc;
 	this.func = func;
@@ -489,6 +494,7 @@ function storeVideoData(videoId, data, onCompletionHandler) {
 }
 
 function storeComment(videoId, timestamp, date, comment, lines, onCompletionHandler) {
+	console.log('storing comments: ' + JSON.stringify(lines));
 	getVideoData(videoId, function(data) {
 		data.push({
 			timestamp: timestamp,
@@ -498,13 +504,12 @@ function storeComment(videoId, timestamp, date, comment, lines, onCompletionHand
 		});
 		storeVideoData(videoId, data, onCompletionHandler);
 	});
-	var comments = JSON.parse(window.localStorage.getItem(videoId, '[]'));
 }
 
-function loadXMLDoc(queryString, func){
+function loadXMLDoc(queryString, func) {
 	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange=function(){
-		if(xmlhttp.readyState==4 && xmlhttp.status==200){
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			func(xmlhttp.responseText);
 		}
 	}
@@ -515,20 +520,21 @@ function loadXMLDoc(queryString, func){
 	xmlhttp.send(queryString);
 }
 
-function checkEnter(e){
-	if(e.keyCode == 13)
+function checkEnter(e) {
+	if (e.keyCode == 13) {
 		document.getElementById("submit").click();
+	}
 }
 
-function selectAll(input){
+function selectAll(input) {
 	input.select();
 }
 
-function getWidth(el){
+function getWidth(el) {
 	 return parseInt(style(el, "width"));
 }
 
-function getHeight(el){
+function getHeight(el) {
 	return parseInt(style(el,"height")) +
 			parseInt(style(el,"border-top")) +
 			parseInt(style(el,"border-bottom")) +
@@ -537,21 +543,22 @@ function getHeight(el){
 			parseInt(style(el,"padding-top")) +
 			parseInt(style(el,"padding-bottom"));
 }
-function togglePlayPause(){
+function togglePlayPause() {
 	var state = player.getPlayerState();
-	if(state == 1)
+	if (state == 1) {
 		pauseVideo();
-	else
+	} else {
 		playVideo();
+	}
 }
-function pauseVideo(){
+function pauseVideo() {
 	player.pauseVideo();
 }
 
 function stopVideo() {
 	player.stopVideo();
 }
-function playVideo(){
+function playVideo() {
 	player.playVideo();
 	clearCanvas();
 }

@@ -254,9 +254,9 @@ function drawLines(lines) {
 	var cHeight = commentCanvas.height;
 	console.log('Drawing: ' + cWidth + ' ' + cHeight + ' ' + lines[0]);
 	commentCanvasContext.beginPath();
-	for (var i=0; i<lines.length; i+=4) {
+	for (var i=0; i<lines.length; i++) {
 		var line = lines[i];
-		commentCanvasContext.moveTo(line[0] * cWidth, line[1] * cHeight)
+		commentCanvasContext.moveTo(line[0] * cWidth, line[1] * cHeight);
 		commentCanvasContext.lineTo(line[2] * cWidth, line[3] * cHeight);
 		// console.log([line[i]*cWidth, lines[i+1]*cHeight, lines[i+2]*cWidth, lines[i+3]*cHeight]);
 		// canvasContext.moveTo(lines[i]*cWidth, lines[i+1]*cHeight);
@@ -358,10 +358,6 @@ function init() {
 					prevX / cWidth, prevY / cHeight,
 					    x / cWidth,     y / cHeight
 				];
-				// console.log("before loop: " + JSON.stringify(arr));
-				// for (var i in arr)
-				// 	arr[i] = arr[i].toFixed(4);
-				// console.log("adding line: " + JSON.stringify(arr));
 				drawingLines.push(arr);
 
 				drawLine(prevX, prevY, x, y);

@@ -13,7 +13,7 @@ var HELPER_CLASSNAME = (function(){
 	el.className = "t";
 	return el.getAttribute("class") === "t" ? "class" : "className";
 })();
-function genEl(type, attrs, styles, innerHTML){
+function genEl(type, attrs, styles, text){
 	var el = document.createElement(type);
 
 	for(var attr in attrs)
@@ -21,12 +21,12 @@ function genEl(type, attrs, styles, innerHTML){
 			el.setAttribute(HELPER_CLASSNAME, attrs[attr]);
 		else if(attr.indexOf("on") == 0){
 			//var f = attrs[attr].toString();
-			
+
 			//Dumps the contents of the function into the attribute
 			//f = f.substring(f.indexOf("{")+1);
 			//f = f.substring(0, f.lastIndexOf("}"));
 			//el.setAttribute(attr, f);
-			
+
 			el.addEventListener(attr.substring(2), attrs[attr]); //NOT IDEAL SOLUTION but appears to conform to chrome
 		}else
 			el.setAttribute(attr, attrs[attr]);
@@ -36,7 +36,7 @@ function genEl(type, attrs, styles, innerHTML){
 		cssText += style + ":" + styles[style] + ";";
 	el.style.cssText = cssText;
 
-	el.innerHTML = innerHTML?innerHTML:"";
+	el.appendChild(document.createTextNode(text || ''));
 
 	return el;
 }

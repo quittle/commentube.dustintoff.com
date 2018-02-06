@@ -139,10 +139,9 @@ function editComment(e) {
 		commentSent.style.opacity = 1;
 
 		var time = player.getCurrentTime();
-		var comment = commentArea.value.replace(/ /g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\n/g, '<br />').replace(/\//g, "//").replace(/\\/g, "\\");
+		var comment = commentArea.value;
 		var date = new Date().getTime();
 		addComment(time, date, comment, drawingLines);
-		comment = comment.replace(/%/g, "%25").replace(/&/g, "%26");
 
 		storeComment(videoid, time, date, comment, drawingLines, function() {
 			commentSent.innerHTML = "Comment sent.";
@@ -204,15 +203,12 @@ function addComment(time, date, commentString, lines) {
 		player.seekTo(time, true);
 		pauseVideo();
 		clearCanvas();
-		console.log("drawing lines: " + JSON.stringify(lines));
 		drawLines(lines);
 	};
 	comment.appendChild(genEl("span", {"class":"commentJump","onclick":jumpTo}, null, "Jump To"));
 
-	var rollingComment = genEl("div", {"class":"rollingComment", "time":time, "onclick":jumpTo});
+	var rollingComment = genEl("div", {"class":"rollingComment", "time":time, "onclick":jumpTo}, null, commentString);
 
-	var newLine = commentString.indexOf("<br /");
-	rollingComment.innerHTML = newLine==-1?commentString:commentString.substring(0, newLine) + "...";
 	var inserted = false;
 	if (rollingCommentsHolder.hasChildNodes()) {
 		for (var i=0; i<rollingCommentsHolder.childNodes.length; i++) {

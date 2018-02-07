@@ -155,18 +155,6 @@ function editComment(e) {
 			}, 10);
 		});
 
-		// loadXMLDoc("video="+videoid+ "&time="+time+ "&comment="+c+ "&lines="+drawingLines, function (ret) {
-		// 	commentSent.innerHTML = "Comment sent.";
-		// 	var c = setInterval(function() {
-		// 		commentSent.style.opacity = parseFloat(commentSent.style.opacity) - 0.005;
-		// 		if (parseFloat(commentSent.style.opacity) < 0) {
-		// 			commentSent.style.visibility = "hidden";
-		// 			commentSent.style.opacity = 1;
-		// 			cancelTimer(c);
-		// 		}
-		// 	}, 10);
-		// });
-
 		playVideo();
 
 		commentArea.value = "";
@@ -248,15 +236,11 @@ function drawLine(x1, y1, x2, y2) {
 function drawLines(lines) {
 	var cWidth = commentCanvas.width;
 	var cHeight = commentCanvas.height;
-	console.log('Drawing: ' + cWidth + ' ' + cHeight + ' ' + lines[0]);
 	commentCanvasContext.beginPath();
 	for (var i=0; i<lines.length; i++) {
 		var line = lines[i];
 		commentCanvasContext.moveTo(line[0] * cWidth, line[1] * cHeight);
 		commentCanvasContext.lineTo(line[2] * cWidth, line[3] * cHeight);
-		// console.log([line[i]*cWidth, lines[i+1]*cHeight, lines[i+2]*cWidth, lines[i+3]*cHeight]);
-		// canvasContext.moveTo(lines[i]*cWidth, lines[i+1]*cHeight);
-		// canvasContext.lineTo(lines[i+2]*cWidth, lines[i+3]*cHeight);
 	}
 	commentCanvasContext.stroke();
 }
@@ -435,6 +419,15 @@ function init() {
 	commentCanvas.addEventListener("mouseup", setDivider);
 	rollingComments.addEventListener("mouseup", setDivider);
 	divider.addEventListener("mouseup", setDivider);
+
+	initFirebase();
+}
+
+function initFirebase() {
+	firebase.initializeApp({
+		apiKey: 'AIzaSyB4aQ8SLRXQLfG-rsh4oeWVZJGEDsCL3Tk',
+		databaseURL: 'https://commentube-dustintoff-com.firebaseio.com',
+	});
 }
 
 function setCurTimeBox() {
@@ -472,21 +465,16 @@ function TimeFunc(time, acc, func, obj) {
 }
 
 function getVideoData(videoId, callback) {
-	var dataString = window.localStorage.getItem(videoId);
-	if (dataString) {
-		callback(JSON.parse(dataString));
-	} else {
-		callback([]);
-	}
+	firebase.database().ref('videos/' + videoId).once('value').then(function(data) {
+		callback(data.val() || []);
+	});
 }
 
 function storeVideoData(videoId, data, onCompletionHandler) {
-	window.localStorage.setItem(videoId, JSON.stringify(data));
-	onCompletionHandler();
+	firebase.database().ref('videos/' + videoId).set(data).then(onCompletionHandler);gi
 }
 
 function storeComment(videoId, timestamp, date, comment, lines, onCompletionHandler) {
-	console.log('storing comments: ' + JSON.stringify(lines));
 	getVideoData(videoId, function(data) {
 		data.push({
 			timestamp: timestamp,
@@ -496,20 +484,6 @@ function storeComment(videoId, timestamp, date, comment, lines, onCompletionHand
 		});
 		storeVideoData(videoId, data, onCompletionHandler);
 	});
-}
-
-function loadXMLDoc(queryString, func) {
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			func(xmlhttp.responseText);
-		}
-	}
-	//xmlhttp.open("GET","save.php?" + queryString, true);
-	//xmlhttp.send();
-	xmlhttp.open("POST","save.php", false);
-	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-	xmlhttp.send(queryString);
 }
 
 function checkEnter(e) {

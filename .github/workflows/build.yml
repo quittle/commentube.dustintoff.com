@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -24,11 +24,11 @@ jobs:
       - run: npm run build
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         with:
           role-to-assume: arn:aws:iam::915290536872:role/commentube.dustintoff.com-deploy
           role-session-name: Deploy_via_GitHub_to_AWS_via_FederatedOIDC
           aws-region: us-east-1
       - name: Deploy to S3
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: npm run deploy

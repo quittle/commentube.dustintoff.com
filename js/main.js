@@ -2,7 +2,7 @@ import "./dQuery.js"; // side effects: polyfills, placeholder init on window loa
 import { style, getBeneath, getRelativeX, getRelativeY, restrict, friendlyTime } from "./dQuery.js";
 import { extractYoutubeVideoId, genEl } from "./helper.js";
 
-var videoid, commentArea, commentBox, curTimeBox, progressBar, progress, progressCursor, playerWrapper, playerSection, commentCanvas, divider, rollingComments, rollingCommentsHolder, commentHolder, commentSent; //DOM
+var videoid, commentArea, commentBox, curTimeBox, progressBar, progress, progressCursor, progressIndicator, playerWrapper, playerSection, commentCanvas, divider, rollingComments, rollingCommentsHolder, commentHolder, commentSent; //DOM
 var player; //YT.Player
 var commentCanvasContext; //Context2D
 var playerMonitor; //PlayerMonitor
@@ -280,6 +280,7 @@ function init() {
 	curTimeBox = document.getElementById("commentTime");
 	progressBar = document.getElementById("progressBar");
 	progress = document.getElementById("progress");
+	progressIndicator = document.getElementById("progressIndicator");
 	progressCursor = document.getElementById("progressCursor");
 	rollingComments = document.getElementById("rollingComments");
 	rollingCommentsHolder = document.getElementById("rollingComments-holder");
@@ -398,7 +399,7 @@ function init() {
 	};
 	progressCursor.addEventListener("mousemove", moveCursor);
 	progressBar.addEventListener("mousemove", moveCursor);
-	progressBar.addEventListener("click", function() {isMouseDownProgressCursor = true; moveCursor(event);setCursor(event);});
+	progressBar.addEventListener("click", function(e) {isMouseDownProgressCursor = true; moveCursor(e);setCursor(e);});
 	commentCanvas.addEventListener("mousemove", moveCursor);
 
 	progressCursor.addEventListener("mouseup", setCursor);

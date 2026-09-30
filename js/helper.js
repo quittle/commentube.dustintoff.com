@@ -40,3 +40,5 @@ function genEl(type, attrs, styles, text){
 
 	return el;
 }
+// ES module exports for the Vite build.
+export { extractYoutubeVideoId, genEl };

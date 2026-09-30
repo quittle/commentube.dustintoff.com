@@ -479,3 +479,6 @@ function AjaxRequest(url, method, contentType, defaultAsync, preventCache, defau
 		}
 	};
 }
+// ES module exports for the Vite build. The file is still imported for its
+// side effects (IE polyfills, placeholder init on window load).
+export { style, getBeneath, getRelativeX, getRelativeY, restrict, friendlyTime };

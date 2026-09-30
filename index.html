@@ -1,52 +1,62 @@
-<body>
-	<!-- Add close to scroll comments -->
-	<div id="wrapper">
-		<div id="header">
-			Youtube video url: <input id="videoid" placeholder="http://www.youtube.com/watch?v=..." type="text" onfocus="selectAll(this);" onclick="selectAll(this);" onkeypress="return checkEnter(event);" />
-			<input id="submit" type="submit" onclick="getVideoPlayer()" value="Load video" />
-			<a href="help.html" target="new">Need Help?</a>
-			<br /><br />
-		</div>
-		<div id="playerSection" style="display: none;">
-			<div id="playerWrapper">
-				<div id="playerControls">
-					<div id="progressBar">
-						<span id="progress">
-							<span id="progressIndicator">
-								<span id="progressCursor"></span>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>CommenTube - YouTube Video Critiquing Platform</title>
+		<meta name="application-name" content="CommenTube - YouTube Video Critiquing Platform" />
+		<link rel="stylesheet" href="./css/main.css" type="text/css" />
+		<script type="module" src="./js/main.js"></script>
+	</head>
+	<body>
+		<!-- Add close to scroll comments -->
+		<div id="wrapper">
+			<div id="header">
+				Youtube video url: <input id="videoid" placeholder="http://www.youtube.com/watch?v=..." type="text" />
+				<input id="submit" type="submit" value="Load video" />
+				<a href="./help.html" target="new">Need Help?</a>
+				<br /><br />
+			</div>
+			<div id="playerSection" style="display: none;">
+				<div id="playerWrapper">
+					<div id="playerControls">
+						<div id="progressBar">
+							<span id="progress">
+								<span id="progressIndicator">
+									<span id="progressCursor"></span>
+								</span>
 							</span>
-						</span>
+						</div>
+					</div>
+					<canvas id="commentCanvas" style="display: none;"></canvas>
+					<div id="playerHolder">
+						<div id="player"></div><!-- swapped for iframe player -->
 					</div>
 				</div>
-				<canvas id="commentCanvas" style="display: none;"></canvas>
-				<div id="playerHolder">
-					<div id="player"></div><!-- swapped for iframe player -->
+
+				<div id="divider"></div>
+
+				<div id="rollingComments">
+					<div id="rollingComments-shadow-top" class="gradient"></div>
+					<div id="rollingComments-holder"></div>
+					<div id="rollingComments-shadow-bottom" class="gradient"></div>
 				</div>
 			</div>
-
-			<div id="divider"></div>
-
-			<div id="rollingComments">
-				<div id="rollingComments-shadow-top" class="gradient"></div>
-				<div id="rollingComments-holder"></div>
-				<div id="rollingComments-shadow-bottom" class="gradient"></div>
+			<div id="commentHolder" style="display:none;">
+				<div id="commentHolder-left">
+					<span id="commentTime"></span><br /><br /><br /><br />
+					<div id="commentSent">Sending...</div>
+				</div>
+				<textarea id="commentArea" placeholder="Leave a comment.."></textarea>
+				<div class="clearfix"></div>
 			</div>
+			<div id="commentBox"></div>
 		</div>
-		<div id="commentHolder" style="display:none;">
-			<div id="commentHolder-left">
-				<span id="commentTime"></span><br /><br /><br /><br />
-				<div id="commentSent">Sending...</div>
-			</div>
-			<textarea id="commentArea" onkeypress="return editComment(event);" placeholder="Leave a comment.."></textarea>
-			<div class="clearfix"></div>
-		</div>
-		<div id="commentBox"></div>
-	</div>
 
-	<!-- YouTUbe API -->
-	<script type="text/javascript" src="https://www.youtube.com/iframe_api" defer></script>
+		<!-- YouTUbe API -->
+		<script type="text/javascript" src="https://www.youtube.com/iframe_api" defer></script>
 
-	<!-- Firebase -->
-	<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js"></script>
-</body>
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-database.js"></script>
+	</body>
+</html>

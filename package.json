@@ -1,0 +1,1 @@
+{"devDependencies":{"vite":"^6.3.5"},"name":"commentube.dustintoff.com","private":true,"scripts":{"build":"vite build","deploy":"npm run build && aws s3 sync dist/ s3://commentube.dustintoff.com --delete --cache-control 'public, max-age=900'","dev":"vite","preview":"vite preview"},"type":"module","version":"1.0.0"}

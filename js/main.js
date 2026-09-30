@@ -1,3 +1,7 @@
+import "./dQuery.js"; // side effects: polyfills, placeholder init on window load
+import { style, getBeneath, getRelativeX, getRelativeY, restrict, friendlyTime } from "./dQuery.js";
+import { extractYoutubeVideoId, genEl } from "./helper.js";
+
 var videoid, commentArea, commentBox, curTimeBox, progressBar, progress, progressCursor, playerWrapper, playerSection, commentCanvas, divider, rollingComments, rollingCommentsHolder, commentHolder, commentSent; //DOM
 var player; //YT.Player
 var commentCanvasContext; //Context2D
@@ -47,8 +51,9 @@ function getVideoPlayer() {
 	commentBox.innerHTML = "";
 }
 
-// Called automatically after the API code downloads.
-function onYouTubeIframeAPIReady() {}
+// Called automatically after the YouTube API code downloads. Must be global:
+// the YT iframe API looks it up on window.
+window.onYouTubeIframeAPIReady = function() {};
 
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
@@ -260,6 +265,13 @@ function init() {
 	}
 	selectAll(v);
 
+	// Wire up the header controls (replaces the old inline onclick/onkeypress
+	// handlers, which can't reach module-scoped functions).
+	v.addEventListener("focus", function() { selectAll(v); });
+	v.addEventListener("click", function() { selectAll(v); });
+	v.addEventListener("keypress", checkEnter);
+	document.getElementById("submit").addEventListener("click", getVideoPlayer);
+
 	//Grab all elements I'll need
 	playerWrapper = document.getElementById("playerWrapper");
 	playerSection = document.getElementById("playerSection");
@@ -275,6 +287,13 @@ function init() {
 	commentCanvas = document.getElementById("commentCanvas");
 	commentHolder = document.getElementById("commentHolder");
 	commentSent = document.getElementById("commentSent");
+
+	// Inline onkeypress="return editComment(event)" can't reach module scope;
+	// returning false from a listener doesn't preventDefault, so do it here.
+	commentArea.addEventListener("keypress", function(e) {
+		if (editComment(e) === false)
+			e.preventDefault();
+	});
 
 	//Stop the right-click context-menu
 	var rFalse = function() {return false;};
@@ -471,7 +490,7 @@ function getVideoData(videoId, callback) {
 }
 
 function storeVideoData(videoId, data, onCompletionHandler) {
-	firebase.database().ref('videos/' + videoId).set(data).then(onCompletionHandler);gi
+	firebase.database().ref('videos/' + videoId).set(data).then(onCompletionHandler);
 }
 
 function storeComment(videoId, timestamp, date, comment, lines, onCompletionHandler) {

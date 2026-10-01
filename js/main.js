@@ -265,8 +265,7 @@ function init() {
 	}
 	selectAll(v);
 
-	// Wire up the header controls (replaces the old inline onclick/onkeypress
-	// handlers, which can't reach module-scoped functions).
+	// Wire up the header controls
 	v.addEventListener("focus", function() { selectAll(v); });
 	v.addEventListener("click", function() { selectAll(v); });
 	v.addEventListener("keypress", checkEnter);
@@ -289,8 +288,7 @@ function init() {
 	commentHolder = document.getElementById("commentHolder");
 	commentSent = document.getElementById("commentSent");
 
-	// Inline onkeypress="return editComment(event)" can't reach module scope;
-	// returning false from a listener doesn't preventDefault, so do it here.
+	// Inline onkeypress="return editComment(event)" can't reach module scope.
 	commentArea.addEventListener("keypress", function(e) {
 		if (editComment(e) === false)
 			e.preventDefault();

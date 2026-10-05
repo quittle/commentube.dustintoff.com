@@ -1,4 +1,8 @@
-var videoid, commentArea, commentBox, curTimeBox, progressBar, progress, progressCursor, playerWrapper, playerSection, commentCanvas, divider, rollingComments, rollingCommentsHolder, commentHolder, commentSent; //DOM
+import "./dQuery.js"; // side effects: polyfills, placeholder init on window load
+import { style, getBeneath, getRelativeX, getRelativeY, restrict, friendlyTime } from "./dQuery.js";
+import { extractYoutubeVideoId, genEl } from "./helper.js";
+
+var videoid, commentArea, commentBox, curTimeBox, progressBar, progress, progressCursor, progressIndicator, playerWrapper, playerSection, commentCanvas, divider, rollingComments, rollingCommentsHolder, commentHolder, commentSent; //DOM
 var player; //YT.Player
 var commentCanvasContext; //Context2D
 var playerMonitor; //PlayerMonitor
@@ -47,8 +51,9 @@ function getVideoPlayer() {
 	commentBox.innerHTML = "";
 }
 
-// Called automatically after the API code downloads.
-function onYouTubeIframeAPIReady() {}
+// Called automatically after the YouTube API code downloads. Must be global:
+// the YT iframe API looks it up on window.
+window.onYouTubeIframeAPIReady = function() {};
 
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
@@ -260,6 +265,12 @@ function init() {
 	}
 	selectAll(v);
 
+	// Wire up the header controls
+	v.addEventListener("focus", function() { selectAll(v); });
+	v.addEventListener("click", function() { selectAll(v); });
+	v.addEventListener("keypress", checkEnter);
+	document.getElementById("submit").addEventListener("click", getVideoPlayer);
+
 	//Grab all elements I'll need
 	playerWrapper = document.getElementById("playerWrapper");
 	playerSection = document.getElementById("playerSection");
@@ -268,6 +279,7 @@ function init() {
 	curTimeBox = document.getElementById("commentTime");
 	progressBar = document.getElementById("progressBar");
 	progress = document.getElementById("progress");
+	progressIndicator = document.getElementById("progressIndicator");
 	progressCursor = document.getElementById("progressCursor");
 	rollingComments = document.getElementById("rollingComments");
 	rollingCommentsHolder = document.getElementById("rollingComments-holder");
@@ -275,6 +287,12 @@ function init() {
 	commentCanvas = document.getElementById("commentCanvas");
 	commentHolder = document.getElementById("commentHolder");
 	commentSent = document.getElementById("commentSent");
+
+	// Inline onkeypress="return editComment(event)" can't reach module scope.
+	commentArea.addEventListener("keypress", function(e) {
+		if (editComment(e) === false)
+			e.preventDefault();
+	});
 
 	//Stop the right-click context-menu
 	var rFalse = function() {return false;};
@@ -379,7 +397,7 @@ function init() {
 	};
 	progressCursor.addEventListener("mousemove", moveCursor);
 	progressBar.addEventListener("mousemove", moveCursor);
-	progressBar.addEventListener("click", function() {isMouseDownProgressCursor = true; moveCursor(event);setCursor(event);});
+	progressBar.addEventListener("click", function(e) {isMouseDownProgressCursor = true; moveCursor(e);setCursor(e);});
 	commentCanvas.addEventListener("mousemove", moveCursor);
 
 	progressCursor.addEventListener("mouseup", setCursor);
@@ -471,7 +489,7 @@ function getVideoData(videoId, callback) {
 }
 
 function storeVideoData(videoId, data, onCompletionHandler) {
-	firebase.database().ref('videos/' + videoId).set(data).then(onCompletionHandler);gi
+	firebase.database().ref('videos/' + videoId).set(data).then(onCompletionHandler);
 }
 
 function storeComment(videoId, timestamp, date, comment, lines, onCompletionHandler) {

@@ -288,7 +288,6 @@ function init() {
 	commentHolder = document.getElementById("commentHolder");
 	commentSent = document.getElementById("commentSent");
 
-	// Inline onkeypress="return editComment(event)" can't reach module scope.
 	commentArea.addEventListener("keypress", function(e) {
 		if (editComment(e) === false)
 			e.preventDefault();
